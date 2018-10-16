@@ -4,7 +4,7 @@
 
 需求:在页面的底部添加一个卡片。卡片内容根据api返回。所以高度是不固定的。需要卡片底定位在底部，并且卡片高度以外的地方不被遮住。
 <video id="video" controls="" preload="none" poster="http://om2bks7xs.bkt.clouddn.com/2017-08-26-Markdown-Advance-Video.jpg">
-      <source id="mp4" src="./imgs/self-adaption_height.mp4" type="video/mp4">
+      <source id="mp4" src="https://github.com/CarreyTsai/SelfAdaptionViewPager/blob/master/imgs/self-adaption_height.mp4" type="video/mp4">
       </video>
       
 一个函数搞定：
