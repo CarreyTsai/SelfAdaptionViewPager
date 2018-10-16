@@ -3,7 +3,7 @@
 
 
 需求:在页面的底部添加一个卡片。卡片内容根据api返回。所以高度是不固定的。需要卡片底定位在底部，并且卡片高度以外的地方不被遮住。
-
+![link](https://github.com/CarreyTsai/SelfAdaptionViewPager/blob/master/imgs/self-adaption_height.mp4)
 一个函数搞定：
 
  我们在view 测量的时候 计算当前显示的子view 的高度来设置viewpager 的高度
