@@ -7,6 +7,7 @@ buildscript {
         jcenter(){
             url "http://jcenter.bintray.com/"
         }
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -23,6 +24,7 @@ allprojects {
         jcenter(){
             url "http://jcenter.bintray.com/"
         }
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
 }
 
