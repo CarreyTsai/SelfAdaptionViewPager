@@ -9,16 +9,63 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
+    private val mItemViewHeight = ArrayList<Int>()
+    private val MIN_SCALE = 0.5f
+    private val MIN_ALPHA = 0.99f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var viewPager = findViewById<ViewPager>(R.id.selfAdapterViewPager)
+        var viewPager = findViewById<ViewPager>(R.id.selfAdapterViewPager) as ViewPager
+        initItemsHeight()
 
-        viewPager.adapter = object : PagerAdapter() {
+        viewPager.setPageTransformer(false) { page, position ->
+            val pageWidth = page.getWidth()
+            val pageHeight = page.getHeight()
+
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                page.setAlpha(1f)
+
+            } else if (position <= 1) { // [-1,1]
+                // Modify the default slide transition to shrink the page as well
+                val scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position))
+                val vertMargin = pageHeight * (1 - scaleFactor) / 2
+                val horzMargin = pageWidth * (1 - scaleFactor) / 2
+                if (position < 0) {
+                    page.setTranslationX(horzMargin - vertMargin / 2)
+                } else {
+                    page.setTranslationX(-horzMargin + vertMargin / 2)
+                }
+
+                // Scale the page down (between MIN_SCALE and 1)
+                page.setScaleX(scaleFactor)
+                page.setScaleY(scaleFactor)
+
+                // Fade the page relative to its size.
+                page.setAlpha(MIN_ALPHA + (scaleFactor - MIN_SCALE) / (1 - MIN_SCALE) * (1 - MIN_ALPHA))
+
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                page.setAlpha(1f)
+            }
+        }
+
+
+        viewPager.adapter = object : PagerAdapter(), SelfAdaptionHeightViewPager.ViewPagerItemInfo {
+            override fun getItemViewHeight(position: Int): Int {
+                return if (position < mItemViewHeight.size) {
+                    mItemViewHeight[position]
+                } else 0
+
+            }
+
+            override fun getItemViewSize() = this@MainActivity.mItemViewHeight.size
+
             override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
             override fun getCount(): Int = 10
@@ -33,8 +80,13 @@ class MainActivity : AppCompatActivity() {
                 )
                 img.setImageResource(R.mipmap.ic_launcher)
                 img.scaleType = ImageView.ScaleType.FIT_XY
+
                 root.addView(img)
                 container.addView(root)
+                if (mItemViewHeight[position] <= 0) {
+                    root.measure(0, 0)
+                    mItemViewHeight[position] = root.measuredHeight
+                }
                 return root
             }
 
@@ -46,4 +98,16 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    private fun initItemsHeight() {
+
+        mItemViewHeight.clear()
+        for (i in 0..10) {
+            mItemViewHeight.add(0)
+        }
+
+
+    }
 }
+
+
